@@ -1,9 +1,3 @@
-Perfect — **MeY-Garage** is a strong, professional name 👍
-Here is your **updated, portfolio-ready README** with the new project name.
-
-You can copy-paste this directly into your GitHub repo.
-
----
 
 # 🚗 MeY-Garage Management System
 
