@@ -1,14 +1,115 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  
+}
+
+//////////////////////
+// AUTH (Better Auth)
+//////////////////////
+
+model User {
+  id        String    @id @default(cuid())
+  name      String?
+  email     String    @unique
+  role      Role      @default(RECEPTIONIST)
+  sessions  Session[]
+  createdAt DateTime  @default(now())
+
+  // relations
+  ordersAssigned Order[] @relation("AssignedOrders")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  expiresAt DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  MECHANIC
+  RECEPTIONIST
+}
+
+//////////////////////
+// BUSINESS MODELS
+//////////////////////
+
+model Customer {
+  id        Int      @id @default(autoincrement())
+  firstName String
+  lastName  String
+  email     String?
+  phone     String
+  createdAt DateTime @default(now())
+
+  vehicles Vehicle[]
+  orders   Order[]
+}
+
+model Vehicle {
+  id          Int    @id @default(autoincrement())
+  make        String
+  model       String
+  year        Int
+  plateNumber String @unique
+
+  customerId Int
+  customer   Customer @relation(fields: [customerId], references: [id])
+
+  orders Order[]
+}
+
+model Service {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  price       Float
+
+  orders OrderService[]
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  orderHash   String      @unique
+  status      OrderStatus @default(PENDING)
+  createdAt   DateTime    @default(now())
+  completedAt DateTime?
+
+  // relations
+  customerId Int
+  customer   Customer @relation(fields: [customerId], references: [id])
+
+  vehicleId Int
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
+
+  assignedToId String?
+  assignedTo   User?   @relation("AssignedOrders", fields: [assignedToId], references: [id])
+
+  services OrderService[]
+}
+
+model OrderService {
+  orderId   Int
+  serviceId Int
+  quantity  Int @default(1)
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  service Service @relation(fields: [serviceId], references: [id])
+
+  @@id([orderId, serviceId])
+}
+
+enum OrderStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
 }
