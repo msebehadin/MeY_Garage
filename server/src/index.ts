@@ -1,9 +1,10 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-// import { toNodeHandler } from "better-auth/node";
-// import { auth } from "./lib/auth.js"; // Adjust path to your auth config
+import { toNodeHandler } from "better-auth/node";
+
 import { prisma } from './config/db.js';
+import { auth } from './auth/betterAuth.js';
 
 dotenv.config();
 
@@ -15,7 +16,7 @@ app.use(cors({
   credentials: true 
 }));
 
-// app.all("/api/auth/*", toNodeHandler(auth));
+app.all("/api/auth/*", toNodeHandler(auth));
 
 
 app.use(express.json());
