@@ -4,4 +4,4 @@ import { auth } from "../config/auth";
 
 export const authRoute = Router();
 
-authRoute.all("/*", toNodeHandler(auth));
+authRoute.all("/{*any}", toNodeHandler(auth));

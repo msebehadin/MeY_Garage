@@ -17,12 +17,10 @@ app.use(cors({
   credentials: true 
 
 }));
-
-
+app.use(express.json());
 app.all("/api/auth/*", toNodeHandler(auth));
 
 
-app.use(express.json());
 
 // Standard Routes
 app.get('/', (req, res) => res.json({ message: 'API running' }));
@@ -41,7 +39,7 @@ const PORT = process.env.PORT || 4000;
 
 // console.log('DATABASE_URL:', process.env.DATABASE_URL);
 app.listen(PORT, async () => {
-    console.log(`Server running on ${PORT}`);
+    console.log(`Server running on      ${PORT}`);
     try {
         
         await prisma.$connect();
