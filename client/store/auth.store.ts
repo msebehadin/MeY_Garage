@@ -22,14 +22,14 @@ export const useAuthStore = create<AuthState>((set) => ({
       body: JSON.stringify({ email, password }),
     });
 
-    const res = await apiFetch("/api/auth/session");
+    const res = await apiFetch("/api/auth/get-session");
     const data = await res.json();
 
     set({ user: data.user, isAuthenticated: true, loading: false });
   },
 
   checkSession: async () => {
-    const res = await apiFetch("/api/auth/session");
+    const res = await apiFetch("/api/auth/get-session");
     if (!res.ok) return;
 
     const data = await res.json();
