@@ -1,14 +1,11 @@
 'use client'
-import React, { useState } from 'react';
+import  React, { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
-interface PasswordType{
-    showPassword:()=>void;
-    setShowPassword
-}
+
 export function ManagerLoginForm() {
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e:React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e:React.FormEvent) => {
     e.preventDefault();
     // Login logic here
   };
