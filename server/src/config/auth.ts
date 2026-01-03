@@ -12,6 +12,12 @@ export const auth = betterAuth({
 	emailAndPassword: {
 		enabled: true
 	},
+	plugins:[
+		admin({
+			defaultRole:'MECHANIC',
+			adminRole:'ADMIN'
+		})
+	],
 	user: {
 		additionalFields: {
 			role: {
@@ -25,7 +31,7 @@ export const auth = betterAuth({
 	session: {
 		fields: {
 			user: {
-				role: true,
+				additionalFeilds:['role'],
 			},
 		},
 	},
