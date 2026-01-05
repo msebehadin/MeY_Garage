@@ -4,7 +4,7 @@ import cors from 'cors';
 import { toNodeHandler } from "better-auth/node";
 import { prisma } from './config/db';
 import { auth } from './config/auth';
-import { requireRole } from './middlewares/requireRole';
+
 
 
 dotenv.config();
@@ -35,12 +35,12 @@ app.get('/api/health', async (req, res) => {
     res.status(503).json({ status: 'error', database: 'disconnected' });
   }
 });
-// protected route (ADMIN only)
-app.get('/api/admin',requireRole(['ADMIN']),
-(req,res)=>{
-  res.json({message:'Admin access granted'})
-}
-)
+// // protected route (ADMIN only)
+// app.get('/api/admin',requireRole(['ADMIN']),
+// (req,res)=>{
+//   res.json({message:'Admin access granted'})
+// }
+// )
 
 const PORT = process.env.PORT || 4000;
 
