@@ -1,8 +1,8 @@
 import { prisma } from "../config/db";
 import { Order, OrderStatus } from "@prisma/client";
 interface createOrderInput{
-    customerId: any;
-    customId:number;
+    
+    customerId:number;
     vehicleId:number;
 }
 interface AssignOrderInput{
@@ -13,7 +13,7 @@ export const createOrder = async (data: createOrderInput):Promise<Order> => {
     const vehicle=await prisma.vehicle.findFirst({
         where:{
             id:data.vehicleId,
-            customerId:data.customId
+            customerId:data.customerId
         }
     })
   if (!vehicle) {
