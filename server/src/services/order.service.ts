@@ -48,5 +48,6 @@ export const getOrdersForMechanic = async (mechanicId:string):Promise<Order[]> =
   return prisma.order.findMany({
     where: { assignedToId: mechanicId },
     include: { vehicle: true, customer: true },
+  
   });
 };

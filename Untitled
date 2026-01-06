@@ -1,4 +1,0 @@
-- Always use TypeScript for backend logic.
-- When suggesting code, always explain the "why" briefly.
-- Prefer clean, readable code over "clever" one-liners.
-- If I'm missing an error-handling block (try/catch), point it out.
