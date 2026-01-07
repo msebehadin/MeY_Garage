@@ -2,13 +2,9 @@
 
 import {prisma} from '../config/db'
 import { Role } from '@prisma/client';
-interface UserData{
-    id:string;
-    name:string;
-    email:string;
-    role:Role;
-}
-export const createUser=async (data:UserData)=>{
+import {AppError} from '../errors/AppErrors'
+import { createUserDTO,UpdateUserRoleDTO,UserResponseOTD } from '../utils/AppError';
+export const createUser=async (data)=>{
     const user=await prisma.user.create({
         data:{
             name:data.name,
@@ -18,7 +14,7 @@ export const createUser=async (data:UserData)=>{
     })
     return user
 }
-export const updateUserRole=async (userId:string,data:UserData)=>{
+export const updateUserRole=async (userId:string,data)=>{
 
     const newUser=await prisma.user.update({
         where:{id:userId},
