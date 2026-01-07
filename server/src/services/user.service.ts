@@ -2,17 +2,40 @@
 
 import {prisma} from '../config/db'
 import { Role } from '@prisma/client';
-import {AppError} from '../errors/AppErrors'
-import { createUserDTO,UpdateUserRoleDTO,UserResponseOTD } from '../utils/AppError';
-export const createUser=async (data)=>{
-    const user=await prisma.user.create({
-        data:{
-            name:data.name,
-            email:data.email,
-            role:data.role,
-        }
+import {AppError} from '../utils/AppError'
+import { createUserDTO,UpdateUserRoleDTO,userResponseDTO } from '../DTOS/user.dto';
+
+function toUserResponse(user:any):userResponseDTO{
+    return{
+        id:user.userId,
+        name:user.name,
+        email:user.email,
+        role:user.role,
+        createdAt:user.createdAt
+    }
+}
+// create user
+
+export const createUser=async (data:createUserDTO):Promise<userResponseDTO>=>{
+    // validation 
+    if(!data.name.trim()){
+        throw new AppError('Name is required',400)
+    }
+    // Enum validation before DB
+    if(!Object.values(Role).includes(data.role)){
+        throw new AppError('invalid role',400)
+    }
+
+    const existingUser=await prisma.user.findUnique({
+        where:{email:data.email}
     })
-    return user
+    if(existingUser){
+        throw new AppError('email already in use',409)
+    }
+    const user=await prisma.user.create({
+  data
+    })
+    return toUserResponse(user)
 }
 export const updateUserRole=async (userId:string,data)=>{
 
