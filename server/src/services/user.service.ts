@@ -39,18 +39,18 @@ export const createUser=async (data:createUserDTO):Promise<userResponseDTO>=>{
 }
 export const updateUserRole=async (userId:string,data:UpdateUserRoleDTO,actorRole:Role):Promise<userResponseDTO>=>{
 if(actorRole!==Role.ADMIN){
-    throw new AppError('the role change only by Admin',409)
+    throw new AppError('the role change only by Admin',403)
 }
 if(!Object.values(Role).includes(data.role)){
-    throw new AppError('invalid role',409)
+    throw new AppError('invalid role',403)
 }
-const user=prisma.user.findUnique({
+const user= await  prisma.user.findUnique({
     where:{id:userId}
 })
 if(!user){
     throw new AppError('user not found',404)
 }
-const updateUser=prisma.user.update({
+const updateUser=await prisma.user.update({
     where:{id:userId},
     data:{role:data.role}
 })
