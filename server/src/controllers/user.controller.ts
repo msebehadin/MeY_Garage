@@ -24,11 +24,11 @@ export const getAllUsers = async (req: Request, res: Response) => {
             if(!id||!role){
      return     res.status(400).json({success:false,message:'both id and role are required'})
           }
-        //   if(! Object.values(Role).includes(role)){
-        //     return res.status(400).json({
-        //         success:false,
-        //         message:'invalid role value'
-        //     })
+          if(! Object.values(Role).includes(role)){
+            return res.status(400).json({
+                success:false,
+                message:'invalid role value'
+            })
             const actorRole=(req as any).user?.role;
             if(!actorRole){
                 return res.status(401).json({
