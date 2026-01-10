@@ -14,17 +14,22 @@ const app = express();
 
 app.use(cors({
   origin: process.env.FRONTEND_URL || "http://localhost:3000",
-     methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   credentials: true 
-
 }));
 app.use(express.json());
 app.all("/api/auth/*", toNodeHandler(auth));
 
-
+// System Design: Register route modules
+// Import routes after auth setup but before other routes
+import userRoutes from './routes/user.routes';
 
 // Standard Routes
 app.get('/', (req, res) => res.json({ message: 'API running' }));
+
+// API Routes
+// System Design: Mount user routes at /api/users prefix
+app.use('/api/users', userRoutes);
 
 // Health Check
 app.get('/api/health', async (req, res) => {
