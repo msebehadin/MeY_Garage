@@ -4,7 +4,8 @@ import cors from 'cors';
 import { toNodeHandler } from "better-auth/node";
 import { prisma } from './config/db';
 import { auth } from './config/auth';
-
+import userRoutes from './routes/user.routes';
+import orderRoutes from './routes/order.routes'
 
 
 dotenv.config();
@@ -21,17 +22,12 @@ app.use(express.json());
 app.all("/api/auth/*", toNodeHandler(auth));
 
 
-// Import routes after auth setup but before other routes
-import userRoutes from './routes/user.routes';
-
-// Standard Routes
 app.get('/', (req, res) => res.json({ message: 'API running' }));
 
-// API Routes
-// System Design: Mount user routes at /api/users prefix
-app.use('/api/users', userRoutes);
 
-// Health Check
+app.use('/api/users', userRoutes);
+app.use('/api/orders',orderRoutes)
+
 app.get('/api/health', async (req, res) => {
   try {
     await prisma.$queryRaw`SELECT 1;`;
