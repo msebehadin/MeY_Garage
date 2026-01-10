@@ -20,7 +20,7 @@ app.use(cors({
 app.use(express.json());
 app.all("/api/auth/*", toNodeHandler(auth));
 
-// System Design: Register route modules
+
 // Import routes after auth setup but before other routes
 import userRoutes from './routes/user.routes';
 
@@ -40,12 +40,7 @@ app.get('/api/health', async (req, res) => {
     res.status(503).json({ status: 'error', database: 'disconnected' });
   }
 });
-// // protected route (ADMIN only)
-// app.get('/api/admin',requireRole(['ADMIN']),
-// (req,res)=>{
-//   res.json({message:'Admin access granted'})
-// }
-// )
+
 
 const PORT = process.env.PORT || 4000;
 
