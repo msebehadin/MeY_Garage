@@ -4,43 +4,49 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  
+
 }
 
 //////////////////////
-// AUTH (Better Auth)
+// AUTH (Better Auth) - FIXED!
 //////////////////////
 
 model User {
-  id            String    @id @default(cuid())
+  id            String        @id @default(cuid())
   name          String?
-  email         String    @unique
-  emailVerified Boolean   @default(false)
+  email         String        @unique
+  emailVerified Boolean       @default(false)
   image         String?
-  role          Role      @default(RECEPTIONIST)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  role          Role          @default(RECEPTIONIST)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 
   // auth relations
-  sessions  Session[]
-  accounts  Account[]
+  sessions      Session[]
+  accounts      Account[]
+  verifications Verification[]
 
   // business relations
   ordersAssigned Order[] @relation("AssignedOrders")
 }
 
 model Session {
-  id        String   @id @default(cuid())
-  userId    String
-  expiresAt DateTime
+  id           String   @id @default(cuid())
+  userId       String
+  token        String   @unique  // <- ADDED (required)
+  expiresAt    DateTime
+  ipAddress    String?  // <- ADDED
+  userAgent    String?  // <- ADDED
+  createdAt    DateTime @default(now()) // <- ADDED
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Account {
-  accountId                String   @id @default(cuid())
+  // CHANGE: Use "id" not "accountId"
+  id                String   @id @default(cuid())
   userId            String
-  providerId        String   // Better Auth sends providerId, not provider
+  providerId        String
   providerAccountId String?
   password          String?
   createdAt         DateTime @default(now())
@@ -49,6 +55,18 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([providerId, providerAccountId])
+}
+
+// ADD THIS MODEL (Better Auth requires it)
+model Verification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  code      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum Role {
