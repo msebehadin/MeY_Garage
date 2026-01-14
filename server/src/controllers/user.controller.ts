@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import * as UserService from "../services/user.service";
-import { Role } from "@prisma/client";
+
 import { AppError } from "../utils/AppError";
 
 
@@ -26,7 +26,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
           }
           // System Design: This validation is MANDATORY - it prevents invalid enum values
           // from reaching the service layer. This is "fail fast" validation.
-          if(!Object.values(Role).includes(role)){
+          if(!Object.values(role).includes(role)){
             return res.status(400).json({
                 success:false,
                 message:'invalid role value'

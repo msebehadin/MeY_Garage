@@ -1,3 +1,4 @@
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -12,14 +13,14 @@ datasource db {
 //////////////////////
 
 model User {
-  id            String        @id @default(cuid())
+  id            String   @id @default(cuid())
   name          String?
-  email         String        @unique
-  emailVerified Boolean       @default(false)
+  email         String   @unique
+  emailVerified Boolean  @default(false)
   image         String?
-  role          Role          @default(RECEPTIONIST)
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  role          Role     @default(RECEPTIONIST)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   // auth relations
   sessions      Session[]
@@ -28,18 +29,24 @@ model User {
 
   // business relations
   ordersAssigned Order[] @relation("AssignedOrders")
+
+  @@map("user")
 }
 
 model Session {
-  id           String   @id @default(cuid())
-  userId       String
-  token        String   @unique  // <- ADDED (required)
-  expiresAt    DateTime
-  ipAddress    String?  // <- ADDED
-  userAgent    String?  // <- ADDED
-  createdAt    DateTime @default(now()) // <- ADDED
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique // <- ADDED (required)
+  expiresAt DateTime
+  ipAddress String? // <- ADDED
+  userAgent String? // <- ADDED
+  createdAt DateTime @default(now()) // <- ADDED
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("session")
 }
 
 model Account {
@@ -54,10 +61,21 @@ model Account {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  accountId             String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+
   @@unique([providerId, providerAccountId])
+  @@index([userId])
+  @@map("account")
 }
 
 // ADD THIS MODEL (Better Auth requires it)
+
 model Verification {
   id        String   @id @default(cuid())
   userId    String
@@ -66,7 +84,13 @@ model Verification {
   expiresAt DateTime
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  identifier String
+  value      String
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
 }
 
 enum Role {
