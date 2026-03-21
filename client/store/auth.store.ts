@@ -1,7 +1,15 @@
 import {create } from 'zustand'
 import { apiFetch } from '@/lib/api'
+
+type AuthUser = {
+  id: string;
+  email: string;
+  name?: string | null;
+  role: string;
+};
+
 type AuthState={
-    user: unknown  |null;
+    user: AuthUser | null;
     isAuthenticated:boolean;
     loading:boolean;
     login:(email:string,password:string)=>Promise<void>;
@@ -17,27 +25,33 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async (email, password) => {
     set({ loading: true });
 
-    await apiFetch("/api/auth/sign-in/email", {
+    const loginRes = await apiFetch("/api/auth/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     });
 
-    const res = await apiFetch("/api/auth/get-session");
-    const data = await res.json();
+    if (!loginRes.ok) {
+      set({ loading: false, user: null, isAuthenticated: false });
+      throw new Error("login failed");
+    }
 
+    const data = await loginRes.json();
     set({ user: data.user, isAuthenticated: true, loading: false });
   },
 
   checkSession: async () => {
-    const res = await apiFetch("/api/auth/get-session");
-    if (!res.ok) return;
+    const res = await apiFetch("/api/auth/me");
+    if (!res.ok) {
+      set({ user: null, isAuthenticated: false, loading: false });
+      return;
+    }
 
     const data = await res.json();
     set({ user: data.user, isAuthenticated: true });
   },
 
   logout: async () => {
-    await apiFetch("/api/auth/sign-out", { method: "POST" });
-    set({ user: null, isAuthenticated: false });
+    await apiFetch("/api/auth/logout", { method: "POST" });
+    set({ user: null, isAuthenticated: false, loading: false });
   },
 }));

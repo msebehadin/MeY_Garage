@@ -1,10 +1,8 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { prisma } from './db-cli'
+import { prisma } from "./db";
 
-
-
- const auth = betterAuth({
+export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
@@ -22,6 +20,6 @@ import { prisma } from './db-cli'
     requireEmailVerification: false, // Disable for testing
     minPasswordLength: 1, // Set low for testing
   },
-
 });
-export default auth
+
+export default auth;

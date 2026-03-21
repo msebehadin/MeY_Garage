@@ -1,7 +1,11 @@
 import { Router } from "express";
-import { toNodeHandler } from "better-auth/node";
-import { auth } from "../config/auth";
+import * as authController from "../controllers/auth.controller";
+import { authMIddleware } from "../middlewares/requireAuth";
 
-export const authRoute = Router();
+const router = Router();
 
-authRoute.all("/{*any}", toNodeHandler(auth));
+router.post("/login", authController.login);
+router.get("/me", authMIddleware, authController.me);
+router.post("/logout", authController.logout);
+
+export default router;

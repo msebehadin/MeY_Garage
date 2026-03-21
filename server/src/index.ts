@@ -1,11 +1,10 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import { toNodeHandler } from "better-auth/node";
 import { prisma } from './config/db';
-import { auth } from './config/auth';
 import userRoutes from './routes/user.routes';
 import orderRoutes from './routes/order.routes'
+import authRoutes from './routes/auth.routes';
 
 
 dotenv.config();
@@ -19,12 +18,12 @@ app.use(cors({
   credentials: true 
 }));
 app.use(express.json());
-app.all("/api/auth/*", toNodeHandler(auth));
 
 
 app.get('/', (req, res) => res.json({ message: 'API running' }));
 
 
+app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/orders',orderRoutes)
 
